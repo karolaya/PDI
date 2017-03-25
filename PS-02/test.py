@@ -27,49 +27,44 @@ def histo_eq(img,name):
         cdf_v[v[i]] = cdf[i]
     N = img.shape[0]
     M = img.shape[1]
-    imgh = img.copy()
-    #for i in range(0,N):
-    #    for j in range(0,M):
-    #        imgh[i][j]= round(((cdf_v[img[i][j]]-min(cdf))*(255))/(M*N-1))
-    for row in imgh:
-        for i in row:
-            i = round(((cdf_v[i]-min(cdf))*(255))/(M*N-1))
-    cdf_normalized = cdf *hist.max()/ cdf.max()
+    cdf_min = min(cdf)
+    print type(img)
+    img = np.array(img)
+    #for x in np.nditer(img, op_flags=['writeonly']):
+    #    x = ((cdf_v.get(int(x))-cdf_min)*(255))/(M*N-1)
+    for i in range(0,N):
+        for j in range(0,M):
+            img[i][j]= ((cdf_v.get(img[i][j])-cdf_min)*(255))/(M*N-1)
+        
     print(str(N)+"x"+str(M))
-    #print len(cdf)
-    #print len(v)
-    return imgh,cdf_normalized
+    print img
+    return img
             
     
-#ftp = [2,4,7,8,11,17]
-for i in [2]:
+if __name__ == "__main__" :
+  for i in [2,4,7,8,11,17]:
+    print(files[i])
     img = rg(files[i])
-    hist,_ = np.histogram(img.flatten(),256,[0,256])
-    cdf = hist.cumsum()
-    cdf_n = cdf*hist.max()/ cdf.max()
-    imgh,cdf_nh = histo_eq(rg(files[i]),files[i])
-
+    imgh = histo_eq(rg(files[i]),files[i])
     mplt.figure()
-
-    mplt.subplot(151)
+    mplt.subplot(221)
     mplt.imshow(rg(files[i]), cmap='gray')
     mplt.title(files[i])
-    
-    mplt.subplot(152)      
-    mplt.hist(rg(files[i]),256,[0,256])
-    mplt.xlim([0,256])
-    mplt.show()    
-    
-    mplt.subplot(153)
+    mplt.subplot(222)
     mplt.imshow(imgh, cmap='gray')
     mplt.title("histo_eq("+files[i]+")")
-    
-    mplt.subplot(154)      
-    mplt.hist(imgh,256,[0,256])
-    mplt.xlim([0,256])
-    mplt.show() 
-    
-    mplt.subplot(155)
-    mplt.plot(cdf_n)
-    mplt.xlim([0,256])
-    mplt.show()
+    mplt.subplot(223)
+    hist, bins = np.histogram(img.flatten(),256,[0,256])
+    width = 0.7 * (bins[1] - bins[0])
+    center = (bins[:-1] + bins[1:]) / 2
+    cdf = hist.cumsum()
+    cdf_n = cdf*hist.max()/ cdf.max()
+    mplt.bar(center, hist, align='center', width=width)
+    p_cdf_n, = mplt.plot(cdf_n,color = 'r')
+    mplt.legend([p_cdf_n], ['cdf'])
+    mplt.subplot(224)
+    hist, bins = np.histogram(imgh.flatten(),256,[0,256])
+    width = 0.7 * (bins[1] - bins[0])
+    center = (bins[:-1] + bins[1:]) / 2
+    mplt.bar(center, hist, align='center', width=width)
+    mplt.show()        
