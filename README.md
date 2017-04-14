@@ -1,6 +1,6 @@
 ## PDI Course
 ### Members:
-* Karolay Ardila Salazar
+* Tonta Ardila Salazar
 * Julián Sibaja García
 * Andrés Simancas Mateus
 
